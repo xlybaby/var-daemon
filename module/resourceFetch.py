@@ -26,7 +26,7 @@ async def async_fetch_https(req):
     datadir = ApplicationProperties.configure('application.storage.filesystem.download.tempdir')
     http_client = httpclient.AsyncHTTPClient()
     try:
-        response = await http_client.fetch(url,method='GET',headers=header,validate_cert=False)
+        response = await http_client.fetch(url,method='GET',headers=header,connect_timeout=ApplicationProperties.configure('application.exchange.server.download.connectTimeOut'),request_timeout=ApplicationProperties.configure('application.exchange.server.download.requestTimeOut'),validate_cert=False)
     except Exception as e:
         print("async_fetch_https Error: %s" % e)
     else:
@@ -150,7 +150,7 @@ class Server(TCPServer):
                 await async_fetch_https(args)
             except StreamClosedError:
                 #logger.warning("Lost client at host %s", address[0])
-                await stream.write("{\"status\":\"500\",\"msg\":\"StreamClosedError\"}\n".encode())
+                #await stream.write("{\"status\":\"500\",\"msg\":\"StreamClosedError\"}\n".encode())
                 break
             except Exception as e:
                 print(e)
@@ -172,18 +172,19 @@ class Exchange(object):
         
         if self._mode == "False":
             self._server = Server()
+            print("Nolimited Server starting...")
             
         elif self._mode == "True":
             self._timelineSche = TornadoScheduler()
             _scheduler.add_job(timeline,'interval', seconds=5)
             self._timelineSche.start()
             self._server = LimitServer()
+            print("Limited Server starting...")
             
         self._server.listen(self._listenPort)
         #if q:
         #    q.put_nowait(self)
             
-        print("Server starting...")
         IOLoop.current().start()
         
 if __name__ == '__main__':

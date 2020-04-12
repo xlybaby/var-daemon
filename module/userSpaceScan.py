@@ -26,7 +26,7 @@ async def sjob(pid,scannerId,startSeq,endSeq):
         flag = limit
         while flag == limit:
             flag = 1
-            cur.execute('SELECT * FROM t_uc_material__%s where status = 2 and materialId > %d and materialId <= %d limit %d offset %d'%(pid,startSeq,endSeq,limit,offset))
+            cur.execute('SELECT * FROM t_uc_material__%s where status = 2 and materialId >= %d and materialId < %d limit %d offset %d'%(pid,startSeq,endSeq,limit,offset))
             results=cur.fetchall()
             print(results)
             for idx, r in enumerate(results):
@@ -41,7 +41,7 @@ async def sjob(pid,scannerId,startSeq,endSeq):
                     #{materialId, seqno, definition}
                     #None
                 #else:
-                await inq.put({"materialId":r[0],"uuid":r[1],"type":type,"url":addr,"domain":secondDomain.group(),"definition":r[2]});
+                await inq.put({"pid":pid,"materialId":r[0],"uuid":r[1],"type":type,"url":addr,"domain":secondDomain.group(),"definition":r[2]});
                 flag=flag+idx
                 
             offset=offset+limit
@@ -112,7 +112,7 @@ class InfiniteScan(object):
             intervalSecs = int(record[4])
             pid = record[0]
             fragment = math.ceil((maxSeq-minSeq+1)/splitNum)
-            sp = 0
+            sp = minSeq
             for i in range(splitNum):
                 fromI = sp
                 sp = sp + fragment

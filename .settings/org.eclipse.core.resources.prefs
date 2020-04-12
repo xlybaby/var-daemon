@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+encoding//module/blueWhale.py=utf-8
+encoding//module/centricControl.py=utf-8
+encoding//module/dynamicip.py=utf-8
+encoding//module/itemCollect.py=utf-8
+encoding//module/massCollect.py=utf-8
+encoding//module/resourceFetch.py=utf-8
+encoding//module/userSpaceScan.py=utf-8
+encoding/constants.py=utf-8
+encoding/fileBasedConfiguration.py=utf-8
+encoding/loadApplication.py=utf-8
+encoding/varcommon.py=utf-8
